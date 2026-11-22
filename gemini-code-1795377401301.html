@@ -1,0 +1,1425 @@
+<!DOCTYPE html>
+<html lang="de" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WirCare – Vorausschauende, berührungslose Gesundheitsüberwachung für Senioren</title>
+  <meta name="description" content="Nicht-invasive Überwachung mit Radarsensoren und Wearables, Erfassung von Vitalwerten und KI-Frühwarnung vor Krankheiten – mit Echtzeit-Info für Pflegekräfte, Ärzte und Angehörige." />
+
+  <!-- Google Fonts: Plus Jakarta Sans & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              teal: '#235B63',
+              tealDark: '#194349',
+              sage: '#EBF2EE',
+              sageMid: '#7FA093',
+              offwhite: '#FAF9F6',
+              surface: '#FFFFFF',
+              coral: '#D96B52',
+              coralHover: '#C25941',
+              ink: '#222629',
+              muted: '#525B60'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            display: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #FAF9F6;
+      color: #222629;
+      font-size: 18px;
+      line-height: 1.65;
+    }
+    *:focus-visible {
+      outline: 3px solid #D96B52;
+      outline-offset: 3px;
+    }
+    .soft-shadow {
+      box-shadow: 0 10px 30px -5px rgba(35, 91, 99, 0.08);
+    }
+    @keyframes radarWave {
+      0%, 100% { transform: scale(1); opacity: 0.75; }
+      50% { transform: scale(1.08); opacity: 1; }
+    }
+    .radar-pulse {
+      animation: radarWave 3.5s infinite ease-in-out;
+    }
+    details > summary {
+      list-style: none;
+    }
+    details > summary::-webkit-details-marker {
+      display: none;
+    }
+  </style>
+</head>
+<body class="antialiased selection:bg-brand-teal selection:text-white pb-20 md:pb-0">
+
+  <!-- Skip Link -->
+  <a href="#main-content" data-i18n="skip_link" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:bg-brand-teal focus:text-white focus:px-5 focus:py-3 focus:rounded-xl font-medium">
+    Direkt zum Hauptinhalt springen
+  </a>
+
+  <!-- Status Banner -->
+  <div class="bg-brand-sage border-b border-brand-sageMid/30 text-brand-ink text-sm md:text-base py-2.5 px-4 text-center">
+    <span class="inline-flex items-center gap-2 font-medium">
+      <span class="w-2.5 h-2.5 rounded-full bg-brand-teal inline-block shrink-0"></span>
+      <span data-i18n="banner_pilot">Pilot- & Validierungsphase: Nicht-invasive Sensorik, Vitalwerte & KI-Frühwarnung für Pflegekräfte, Ärzte und Angehörige.</span>
+    </span>
+  </div>
+
+  <!-- Header & Navigation -->
+  <header class="sticky top-0 z-40 bg-brand-offwhite/95 backdrop-blur-md border-b border-stone-200/80">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-20">
+        <!-- Logo -->
+        <a href="#start" class="flex items-center gap-3 group" aria-label="WirCare Startseite">
+          <div class="w-10 h-10 rounded-2xl bg-brand-teal flex items-center justify-center text-white shadow-sm">
+            <i data-lucide="activity" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <span class="font-display font-bold text-xl tracking-tight text-brand-ink block leading-none">Wir<span class="text-brand-teal">Care</span></span>
+            <span data-i18n="brand_sub" class="text-xs text-brand-muted font-medium">KI-Seniorenbegleiter · Pilot</span>
+          </div>
+        </a>
+
+        <!-- Desktop Navigation + Language Switcher -->
+        <div class="hidden md:flex items-center gap-6">
+          <nav class="flex items-center gap-6" aria-label="Hauptnavigation">
+            <a href="#start" data-i18n="nav_start" class="text-base font-medium text-brand-ink hover:text-brand-teal transition-colors py-2">Start</a>
+            <a href="#so-funktionierts" data-i18n="nav_how" class="text-base font-medium text-brand-ink hover:text-brand-teal transition-colors py-2">So funktioniert’s</a>
+            <a href="#fuer-familien" data-i18n="nav_stakeholders" class="text-base font-medium text-brand-ink hover:text-brand-teal transition-colors py-2">Pflege & Familie</a>
+            <a href="#ueber-uns" data-i18n="nav_tech" class="text-base font-medium text-brand-ink hover:text-brand-teal transition-colors py-2">Technik & Schutz</a>
+            <a href="#pilot-kontakt" data-i18n="nav_contact" class="inline-flex items-center justify-center px-5 py-2.5 rounded-xl bg-brand-coral hover:bg-brand-coralHover text-white font-semibold text-base transition-colors shadow-sm">
+              Pilot & Kontakt
+            </a>
+          </nav>
+
+          <!-- Language Toggle (Desktop) -->
+          <button type="button" id="lang-toggle-desktop" class="lang-toggle inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-stone-300 bg-white hover:bg-brand-sage text-brand-ink font-semibold text-sm transition-colors cursor-pointer" aria-label="Sprache wechseln / Switch language">
+            <i data-lucide="globe" class="w-4 h-4 text-brand-teal"></i>
+            <span class="lang-label">EN</span>
+          </button>
+        </div>
+
+        <!-- Mobile Controls -->
+        <div class="flex items-center gap-2 md:hidden">
+          <button type="button" id="lang-toggle-mobile" class="lang-toggle inline-flex items-center gap-1.5 px-3 py-2.5 rounded-xl border border-stone-300 bg-white text-brand-ink font-semibold text-sm" aria-label="Sprache wechseln / Switch language">
+            <i data-lucide="globe" class="w-4 h-4 text-brand-teal"></i>
+            <span class="lang-label">EN</span>
+          </button>
+
+          <button id="mobile-menu-btn" type="button" class="p-3 rounded-xl text-brand-ink hover:bg-brand-sage focus:outline-none" aria-expanded="false" aria-controls="mobile-menu" aria-label="Menü öffnen">
+            <i data-lucide="menu" class="w-7 h-7"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile Navigation Drawer -->
+    <div id="mobile-menu" class="hidden md:hidden bg-white border-b border-stone-200 px-4 pt-3 pb-6 space-y-2 shadow-lg">
+      <a href="#start" data-i18n="nav_start" class="mobile-link block px-4 py-3.5 rounded-xl text-lg font-medium text-brand-ink hover:bg-brand-sage">Start</a>
+      <a href="#so-funktionierts" data-i18n="nav_how" class="mobile-link block px-4 py-3.5 rounded-xl text-lg font-medium text-brand-ink hover:bg-brand-sage">So funktioniert’s</a>
+      <a href="#fuer-familien" data-i18n="nav_stakeholders" class="mobile-link block px-4 py-3.5 rounded-xl text-lg font-medium text-brand-ink hover:bg-brand-sage">Pflege & Familie</a>
+      <a href="#ueber-uns" data-i18n="nav_tech" class="mobile-link block px-4 py-3.5 rounded-xl text-lg font-medium text-brand-ink hover:bg-brand-sage">Technik & Schutz</a>
+      <a href="#pilot-kontakt" data-i18n="nav_contact" class="mobile-link block px-4 py-3.5 rounded-xl text-lg font-semibold bg-brand-coral text-white text-center mt-3">Pilot & Kontakt</a>
+    </div>
+  </header>
+
+  <main id="main-content">
+
+    <!-- =====================================================================
+         1. HERO: PASSIVE SENSORIK, VITALWERTE & KI-FRÜHERKENNUNG
+         ===================================================================== -->
+    <section id="start" class="py-12 md:py-20 lg:py-24">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid lg:grid-cols-12 gap-12 lg:gap-10 items-center">
+
+          <!-- Links -->
+          <div class="lg:col-span-7 space-y-6">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-sage text-brand-teal font-medium text-sm md:text-base">
+              <i data-lucide="radar" class="w-4 h-4"></i>
+              <span data-i18n="hero_badge">Radarsensoren & Wearables · KI-Gesundheitsanalyse</span>
+            </div>
+
+            <h1 class="font-display font-bold text-4xl sm:text-5xl lg:text-[3.25rem] text-brand-ink leading-[1.15] tracking-tight">
+              <span data-i18n="hero_title_1">Krankheiten früh erkennen.</span> <span data-i18n="hero_title_2" class="text-brand-teal">Ohne störende Anrufe.</span>
+            </h1>
+
+            <p data-i18n="hero_subline" class="text-lg sm:text-xl text-brand-muted leading-relaxed max-w-2xl">
+              WirCare erfasst Vitalwerte und Verhaltensmuster passiv über Radarsensoren und Wearables, nutzt KI zur Früherkennung möglicher gesundheitlicher Veränderungen und informiert Pflegekräfte, Ärzte sowie Angehörige in Echtzeit.
+            </p>
+
+            <!-- CTAs -->
+            <div class="pt-2 flex flex-col sm:flex-row gap-4">
+              <a href="#pilot-kontakt" data-select-tab="pilot" class="cta-trigger inline-flex items-center justify-center gap-2.5 px-7 py-4 rounded-2xl bg-brand-coral hover:bg-brand-coralHover text-white font-semibold text-lg transition-all shadow-sm text-center">
+                <span data-i18n="cta_primary">Pilot kennenlernen</span>
+                <i data-lucide="arrow-right" class="w-5 h-5"></i>
+              </a>
+              <a href="#interaktive-demo" class="inline-flex items-center justify-center gap-2.5 px-7 py-4 rounded-2xl bg-white hover:bg-brand-sage text-brand-teal border-2 border-brand-teal/25 font-semibold text-lg transition-all text-center">
+                <i data-lucide="activity" class="w-5 h-5"></i>
+                <span data-i18n="cta_secondary">Echtzeit-Ablauf testen</span>
+              </a>
+            </div>
+
+            <p data-i18n="hero_note" class="text-sm text-brand-muted pt-1">
+              Wie ein leiser Rauchmelder im Hintergrund – ohne Kameras und ohne tägliche Kontrollanrufe.
+            </p>
+          </div>
+
+          <!-- Rechts: Konzeptuelle Darstellung Radar + Wearable + Echtzeit-Info -->
+          <div class="lg:col-span-5">
+            <div class="relative bg-gradient-to-br from-brand-sage to-[#DCE8E2] rounded-3xl p-6 sm:p-8 soft-shadow border border-brand-sageMid/30">
+              <div class="flex justify-between items-center mb-6">
+                <span data-i18n="mockup_badge_concept" class="text-xs font-semibold uppercase tracking-wider text-brand-teal bg-white/80 px-3 py-1 rounded-full">
+                  Konzept-Darstellung
+                </span>
+                <span class="text-xs text-brand-muted flex items-center gap-1.5 bg-white/80 px-3 py-1 rounded-full">
+                  <i data-lucide="eye-off" class="w-3.5 h-3.5 text-brand-teal"></i>
+                  <span data-i18n="mockup_badge_nocam">Keine Kamera</span>
+                </span>
+              </div>
+
+              <div class="bg-white/95 rounded-2xl p-6 space-y-5 border border-white">
+                <div class="relative w-28 h-28 mx-auto flex items-center justify-center">
+                  <div class="absolute inset-0 rounded-full bg-brand-teal/10 radar-pulse"></div>
+                  <div class="absolute inset-3 rounded-full bg-brand-sageMid/20"></div>
+                  <div class="relative w-20 h-20 rounded-2xl bg-gradient-to-b from-[#F5F2EB] to-[#E5DFD3] border-2 border-brand-teal/30 shadow-inner flex flex-col items-center justify-center">
+                    <i data-lucide="radio" class="w-7 h-7 text-brand-teal"></i>
+                    <span class="text-[10px] font-semibold text-brand-teal mt-1">RADAR + AI</span>
+                  </div>
+                </div>
+
+                <!-- Erfasste Vitalwerte & Muster -->
+                <div class="grid grid-cols-2 gap-2.5 text-left text-xs">
+                  <div class="bg-brand-offwhite p-3 rounded-xl border border-stone-200/80">
+                    <span class="text-brand-muted block" data-i18n="hero_v1_l">Atmung & Puls</span>
+                    <span class="font-bold text-sm text-brand-ink" data-i18n="hero_v1_v">Radar + Wearable</span>
+                  </div>
+                  <div class="bg-brand-offwhite p-3 rounded-xl border border-stone-200/80">
+                    <span class="text-brand-muted block" data-i18n="hero_v2_l">Schlaf & Bewegung</span>
+                    <span class="font-bold text-sm text-brand-ink" data-i18n="hero_v2_v">Passives Muster</span>
+                  </div>
+                </div>
+
+                <!-- Echtzeit-Meldung -->
+                <div class="bg-brand-sage/80 rounded-2xl p-4 border border-brand-sageMid/25 text-left">
+                  <p data-i18n="mockup_alert_t" class="text-xs font-semibold text-brand-teal mb-1">Echtzeit-Frühwarnung · Pflege & Arzt</p>
+                  <p data-i18n="mockup_alert_d" class="text-sm text-brand-ink font-medium">„Auffälliger Trend bei nächtlicher Atemfrequenz und Ruhebewegung erkannt – Details live geteilt.“</p>
+                </div>
+
+                <div class="pt-1 flex items-center justify-center gap-2 text-xs sm:text-sm text-brand-teal font-medium">
+                  <i data-lucide="bell-ring" class="w-4 h-4 shrink-0"></i>
+                  <span data-i18n="mockup_done">Keine täglichen Kontrollanrufe nötig</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         2. PROBLEMVERSTÄNDNIS & KENNZAHLEN (Destatis + Rauchmelder-Analogie)
+         ===================================================================== -->
+    <section class="py-16 md:py-20 bg-white border-y border-stone-200/70">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-3xl mx-auto text-center space-y-4 mb-12">
+          <span data-i18n="prob_tag" class="text-sm font-semibold uppercase tracking-wider text-brand-teal">Ausgangslage & Bedarf</span>
+          <h2 data-i18n="prob_title" class="font-display font-bold text-3xl sm:text-4xl text-brand-ink">
+            Von reaktiver Pflege zu vorausschauender Früherkennung
+          </h2>
+          <p data-i18n="prob_sub" class="text-lg text-brand-muted">
+            In Deutschland sind rund 5,7 Millionen Menschen pflegebedürftig – etwa 86 % (4,9 Millionen) leben zu Hause, während Pflegekapazitäten knapp sind und sich gesundheitliche Verschlechterungen oft schleichend anbahnen.
+          </p>
+        </div>
+
+        <!-- Kennzahlen-Karten -->
+        <div class="grid sm:grid-cols-3 gap-6 mb-12">
+          <div class="bg-brand-offwhite rounded-3xl p-6 border border-stone-200/80 text-center">
+            <p class="font-display font-bold text-3xl sm:text-4xl text-brand-teal">5,7 Mio.</p>
+            <p data-i18n="stat_1" class="text-sm text-brand-muted mt-1">Pflegebedürftige in Deutschland (Statistisches Bundesamt)</p>
+          </div>
+          <div class="bg-brand-offwhite rounded-3xl p-6 border border-stone-200/80 text-center">
+            <p class="font-display font-bold text-3xl sm:text-4xl text-brand-teal">4,9 Mio. (86 %)</p>
+            <p data-i18n="stat_2" class="text-sm text-brand-muted mt-1">leben im eigenen Zuhause – oft mit Angehörigen oder ambulantem Dienst</p>
+          </div>
+          <div class="bg-brand-offwhite rounded-3xl p-6 border border-stone-200/80 text-center">
+            <p class="font-display font-bold text-3xl sm:text-4xl text-brand-coral">Echtzeit</p>
+            <p data-i18n="stat_3" class="text-sm text-brand-muted mt-1">Direkte Information an Pflegekraft, Arzt & Familie bei Auffälligkeiten</p>
+          </div>
+        </div>
+
+        <!-- Rauchmelder-Analogie & Kontrollanruf-Problem -->
+        <div class="grid md:grid-cols-2 gap-8">
+          <div class="bg-brand-sage/60 rounded-3xl p-8 border border-brand-sageMid/30 space-y-4">
+            <div class="w-12 h-12 rounded-2xl bg-brand-teal text-white flex items-center justify-center">
+              <i data-lucide="flame" class="w-6 h-6"></i>
+            </div>
+            <h3 data-i18n="smoke_title" class="font-display font-bold text-2xl text-brand-ink">Wie ein stiller Rauchmelder</h3>
+            <p data-i18n="smoke_desc" class="text-base text-brand-ink leading-relaxed">
+              Einen Rauchmelder hängen wir an die Decke, damit er früh warnt, bevor ein Feuer das ganze Haus erfasst. WirCare arbeitet ähnlich unauffällig im Hintergrund: Radarsensoren und Wearables erfassen subtile Veränderungen in Atmung, Vitalwerten und Bewegung, bevor eine akute Krise oder ein Krankenhausaufenthalt entsteht.
+            </p>
+          </div>
+
+          <div class="bg-brand-offwhite rounded-3xl p-8 border border-stone-200/80 space-y-4">
+            <div class="w-12 h-12 rounded-2xl bg-brand-coral/15 text-brand-coral flex items-center justify-center">
+              <i data-lucide="phone-off" class="w-6 h-6"></i>
+            </div>
+            <h3 data-i18n="calls_title" class="font-display font-bold text-2xl text-brand-ink">Keine ständigen Kontrollanrufe mehr</h3>
+            <p data-i18n="calls_desc" class="text-base text-brand-muted leading-relaxed">
+              Tägliche Anrufe „Geht es dir gut?“ werden oft aus Rücksicht mit „Alles bestens“ beantwortet – selbst wenn sich Werte oder Schlafmuster bereits verändern. WirCare liefert Pflegekräften, Ärzten und Angehörigen fundierte Informationen in Echtzeit, ohne den Alltag zu stören.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         3. SO FUNKTIONIERT ES (4 Kernpunkte + Interaktiver Echtzeit-Simulator)
+         ===================================================================== -->
+    <section id="so-funktionierts" class="py-16 md:py-24">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-3xl mx-auto text-center space-y-4 mb-14">
+          <span data-i18n="how_tag" class="text-sm font-semibold uppercase tracking-wider text-brand-teal">Kernfunktionen</span>
+          <h2 data-i18n="how_title" class="font-display font-bold text-3xl sm:text-4xl text-brand-ink">
+            Passiv messen, mit KI prüfen, in Echtzeit informieren
+          </h2>
+          <p data-i18n="how_sub" class="text-lg text-brand-muted">
+            Kein kompliziertes Bedienen und keine lästigen Erinnerungs- oder Kontrollanrufe – der Fokus liegt auf kontinuierlicher Vital- und Musteranalyse.
+          </p>
+        </div>
+
+        <!-- 4 Hauptschritte -->
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+          <div class="bg-white rounded-3xl p-6 soft-shadow border border-stone-200/80">
+            <div class="w-11 h-11 rounded-full bg-brand-teal text-white font-display font-bold flex items-center justify-center text-lg mb-5">1</div>
+            <h3 data-i18n="step_1_t" class="font-display font-bold text-xl text-brand-ink mb-2">Radar & Wearable</h3>
+            <p data-i18n="step_1_d" class="text-base text-brand-muted">
+              Nicht-invasive Radarsensoren im Raum und ein Wearable erfassen passiv Bewegung, Schlaf, Ruhe und körperliche Signale.
+            </p>
+          </div>
+
+          <div class="bg-white rounded-3xl p-6 soft-shadow border border-stone-200/80">
+            <div class="w-11 h-11 rounded-full bg-brand-teal text-white font-display font-bold flex items-center justify-center text-lg mb-5">2</div>
+            <h3 data-i18n="step_2_t" class="font-display font-bold text-xl text-brand-ink mb-2">Vitalwerte messen</h3>
+            <p data-i18n="step_2_d" class="text-base text-brand-muted">
+              Tägliche Gesundheits- und Vitalparameter wie Atemfrequenz, Puls/Herzfrequenzmuster und Aktivitätsverläufe werden erfasst.
+            </p>
+          </div>
+
+          <div class="bg-white rounded-3xl p-6 soft-shadow border border-stone-200/80">
+            <div class="w-11 h-11 rounded-full bg-brand-teal text-white font-display font-bold flex items-center justify-center text-lg mb-5">3</div>
+            <h3 data-i18n="step_3_t" class="font-display font-bold text-xl text-brand-ink mb-2">KI-Frühwarnung</h3>
+            <p data-i18n="step_3_d" class="text-base text-brand-muted">
+              Die KI prüft Vitalwerte und Muster auf Abweichungen, um mögliche gesundheitliche Risiken frühzeitig einzuschätzen.
+            </p>
+          </div>
+
+          <div class="bg-white rounded-3xl p-6 soft-shadow border border-stone-200/80">
+            <div class="w-11 h-11 rounded-full bg-brand-coral text-white font-display font-bold flex items-center justify-center text-lg mb-5">4</div>
+            <h3 data-i18n="step_4_t" class="font-display font-bold text-xl text-brand-ink mb-2">Echtzeit-Info</h3>
+            <p data-i18n="step_4_d" class="text-base text-brand-muted">
+              Alle relevanten Details gehen in Echtzeit an Pflegekraft, Arzt und Angehörige – ohne tägliche Kontrollanrufe.
+            </p>
+          </div>
+        </div>
+
+        <!-- INTERAKTIVE ECHTZEIT-DEMO -->
+        <div id="interaktive-demo" class="bg-white rounded-3xl p-6 sm:p-10 soft-shadow border border-stone-200/90 scroll-mt-28">
+          <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-8 border-b border-stone-200">
+            <div>
+              <span data-i18n="demo_tag" class="inline-block text-xs font-semibold uppercase tracking-wider text-brand-teal bg-brand-sage px-3 py-1 rounded-full mb-2">
+                Interaktive Simulation
+              </span>
+              <h3 data-i18n="demo_title" class="font-display font-bold text-2xl sm:text-3xl text-brand-ink">
+                Vitalwerte, KI-Prüfung & Echtzeit-Meldung erleben
+              </h3>
+              <p data-i18n="demo_sub" class="text-brand-muted mt-1">
+                Wechseln Sie zwischen stabilem Alltag und früh erkannter Auffälligkeit.
+              </p>
+            </div>
+
+            <div class="flex flex-wrap gap-2" role="group" aria-label="Zustand auswählen">
+              <button type="button" id="btn-scenario-ok" data-i18n="demo_btn_1" class="scenario-btn px-4 py-2.5 rounded-xl font-semibold text-sm sm:text-base bg-brand-teal text-white transition-colors cursor-pointer">
+                1. Vitalwerte stabil
+              </button>
+              <button type="button" id="btn-scenario-escalate" data-i18n="demo_btn_2" class="scenario-btn px-4 py-2.5 rounded-xl font-semibold text-sm sm:text-base bg-brand-offwhite text-brand-ink border border-stone-300 hover:bg-brand-sage transition-colors cursor-pointer">
+                2. KI erkennt Frühwarn-Trend
+              </button>
+            </div>
+          </div>
+
+          <div class="grid lg:grid-cols-2 gap-8 pt-8">
+            <!-- Links: Sensorik & Vitalwerte -->
+            <div class="bg-brand-offwhite rounded-2xl p-6 border border-stone-200 flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between mb-4">
+                  <span class="font-display font-bold text-lg text-brand-ink flex items-center gap-2">
+                    <i data-lucide="heart-pulse" class="w-5 h-5 text-brand-teal"></i>
+                    <span data-i18n="demo_home_title">Radar, Wearable & Vitalwerte</span>
+                  </span>
+                  <span data-i18n="demo_home_badge" class="text-xs font-medium text-brand-muted bg-white px-2.5 py-1 rounded-lg border border-stone-200">Passiv & berührungslos</span>
+                </div>
+
+                <div id="demo-home-feed" class="space-y-3.5"></div>
+              </div>
+
+              <div class="mt-6 pt-4 border-t border-stone-200/80 text-sm text-brand-muted flex items-center gap-2">
+                <i data-lucide="wifi-off" class="w-4 h-4 text-brand-teal shrink-0"></i>
+                <span data-i18n="demo_home_note">Lokale Auswertung + Mobilfunk-Fallback & Akku-Puffer bei Strom-/Internetausfall.</span>
+              </div>
+            </div>
+
+            <!-- Rechts: Echtzeit-Verteilung an Pflegekraft, Arzt & Angehörige -->
+            <div class="bg-brand-sage/40 rounded-2xl p-6 border border-brand-sageMid/40">
+              <div class="flex items-center justify-between mb-4">
+                <span class="font-display font-bold text-lg text-brand-ink flex items-center gap-2">
+                  <i data-lucide="share-2" class="w-5 h-5 text-brand-teal"></i>
+                  <span data-i18n="demo_fam_title">Echtzeit-Information (Konzept)</span>
+                </span>
+                <span id="demo-status-badge" class="px-3 py-1 rounded-full text-xs font-semibold bg-brand-sage text-brand-teal">
+                  Stabil
+                </span>
+              </div>
+
+              <div class="bg-white rounded-2xl p-5 shadow-sm border border-stone-200/90 space-y-4">
+                <div id="demo-family-notification" class="rounded-xl p-4 border"></div>
+
+                <div>
+                  <p data-i18n="demo_log_title" class="text-xs font-semibold uppercase tracking-wider text-brand-muted mb-2.5">Empfänger in Echtzeit</p>
+                  <ul id="demo-activity-log" class="space-y-2.5 text-sm"></ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         4. FÜR PFLEGEKRÄFTE, ÄRZTE & ANGEHÖRIGE
+         ===================================================================== -->
+    <section id="fuer-familien" class="py-16 md:py-24 bg-white border-y border-stone-200/70">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-3xl mx-auto text-center space-y-4 mb-16">
+          <span data-i18n="ben_tag" class="text-sm font-semibold uppercase tracking-wider text-brand-teal">Vernetzte Unterstützung</span>
+          <h2 data-i18n="ben_title" class="font-display font-bold text-3xl sm:text-4xl text-brand-ink">
+            Entlastung für Pflege & Ärzte – Ruhe für Angehörige
+          </h2>
+          <p data-i18n="ben_sub" class="text-lg text-brand-muted">
+            Statt erst im Notfall zu reagieren oder Senioren mit täglichen Kontrollanrufen zu belasten, erhalten alle Beteiligten relevante Messwerte und Hinweise in Echtzeit.
+          </p>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-8">
+          <!-- Pflegekräfte -->
+          <div class="bg-brand-offwhite rounded-3xl p-7 border border-stone-200/80 space-y-4">
+            <div class="w-12 h-12 rounded-2xl bg-brand-teal text-white flex items-center justify-center">
+              <i data-lucide="stethoscope" class="w-6 h-6"></i>
+            </div>
+            <h3 data-i18n="role_nurse_t" class="font-display font-bold text-2xl text-brand-ink">Pflegekräfte</h3>
+            <p data-i18n="role_nurse_d" class="text-base text-brand-muted">
+              Frühe Hinweise auf Veränderungen bei Vitalwerten, Schlaf oder Bewegung helfen, gezielt einzugreifen, unnötige Fahrten zu reduzieren und mehr Menschen zu betreuen.
+            </p>
+          </div>
+
+          <!-- Ärzte -->
+          <div class="bg-brand-offwhite rounded-3xl p-7 border border-stone-200/80 space-y-4">
+            <div class="w-12 h-12 rounded-2xl bg-brand-tealDark text-white flex items-center justify-center">
+              <i data-lucide="clipboard-heart" class="w-6 h-6"></i>
+            </div>
+            <h3 data-i18n="role_doc_t" class="font-display font-bold text-2xl text-brand-ink">Ärztinnen & Ärzte</h3>
+            <p data-i18n="role_doc_d" class="text-base text-brand-muted">
+              Bei auffälligen KI-Trends stehen erfasste Vitaldaten und Verlaufsdetails zeitnah zur medizinischen Einordnung und frühzeitigen Abklärung bereit.
+            </p>
+          </div>
+
+          <!-- Angehörige & Senioren -->
+          <div class="bg-brand-offwhite rounded-3xl p-7 border border-stone-200/80 space-y-4">
+            <div class="w-12 h-12 rounded-2xl bg-brand-coral text-white flex items-center justify-center">
+              <i data-lucide="users" class="w-6 h-6"></i>
+            </div>
+            <h3 data-i18n="role_fam_t" class="font-display font-bold text-2xl text-brand-ink">Angehörige & Senioren</h3>
+            <p data-i18n="role_fam_d" class="text-base text-brand-muted">
+              Keine ständigen Kontrollanrufe mehr, die den Alltag stören – Angehörige werden in Echtzeit informiert, wenn sich Werte verändern, und Senioren bleiben unabhängig.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         5. TECHNIK, AUSFALLSICHERHEIT & EHRLICHE EINORDNUNG
+         ===================================================================== -->
+    <section id="ueber-uns" class="py-16 md:py-24">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
+
+        <div class="max-w-3xl mx-auto text-center space-y-4">
+          <span data-i18n="tech_tag" class="text-sm font-semibold uppercase tracking-wider text-brand-teal">Architektur & Transparenz</span>
+          <h2 data-i18n="tech_title" class="font-display font-bold text-3xl sm:text-4xl text-brand-ink">
+            Ausfallsicher, datensparsam und ehrlich eingeordnet
+          </h2>
+          <p data-i18n="tech_sub" class="text-lg text-brand-muted">
+            Da wir uns in der Pilot- und Validierungsphase befinden, kommunizieren wir technische Stärken ebenso klar wie regulatorische und medizinische Grenzen.
+          </p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-8">
+          <!-- Ausfallsicherheit & Datenschutz -->
+          <div class="bg-white rounded-3xl p-8 soft-shadow border border-brand-teal/20 space-y-5">
+            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-sage text-brand-teal font-semibold text-sm">
+              <i data-lucide="shield-check" class="w-4 h-4"></i>
+              <span data-i18n="res_badge">Resilienz & Privatsphäre</span>
+            </div>
+            <h3 data-i18n="res_title" class="font-display font-bold text-2xl text-brand-ink">Auch bei Strom- oder Internetausfall bedacht</h3>
+            <ul class="space-y-3.5 text-base text-brand-muted">
+              <li class="flex items-start gap-3">
+                <i data-lucide="check-circle-2" class="w-5 h-5 text-brand-teal shrink-0 mt-1"></i>
+                <span data-i18n="res_1"><strong class="text-brand-ink">Kein Breitband-Zwang:</strong> Lokale Edge-Verarbeitung und Mobilfunk-Anbindung (z. B. LTE) helfen, wenn das Heim-WLAN ausfällt.</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <i data-lucide="check-circle-2" class="w-5 h-5 text-brand-teal shrink-0 mt-1"></i>
+                <span data-i18n="res_2"><strong class="text-brand-ink">Akku-Puffer bei Stromausfall:</strong> Eine integrierte Batteriereserve überbrückt Unterbrechungen im Rahmen definierter Laufzeiten.</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <i data-lucide="check-circle-2" class="w-5 h-5 text-brand-teal shrink-0 mt-1"></i>
+                <span data-i18n="res_3"><strong class="text-brand-ink">Keine Kameras:</strong> Radar- und Wearable-Sensorik schützt die Privatsphäre zu Hause.</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Ehrliche Grenzen der Pilotphase -->
+          <div class="bg-white rounded-3xl p-8 soft-shadow border border-stone-200/90 space-y-5">
+            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-stone-100 text-brand-ink font-semibold text-sm">
+              <i data-lucide="info" class="w-4 h-4 text-brand-coral"></i>
+              <span data-i18n="lim_badge">Pilot- & Validierungsstatus</span>
+            </div>
+            <h3 data-i18n="lim_title" class="font-display font-bold text-2xl text-brand-ink">Klare Grenzen statt falscher Versprechen</h3>
+            <ul class="space-y-3.5 text-base text-brand-muted">
+              <li class="flex items-start gap-3">
+                <i data-lucide="minus" class="w-5 h-5 text-brand-coral shrink-0 mt-1"></i>
+                <span data-i18n="lim_1"><strong class="text-brand-ink">Frühe Entwicklungsphase:</strong> KI-Frühwarnmodelle werden gemeinsam mit Pflegepartnern und Familien validiert.</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <i data-lucide="minus" class="w-5 h-5 text-brand-coral shrink-0 mt-1"></i>
+                <span data-i18n="lim_2"><strong class="text-brand-ink">Keine garantierte Notfall- oder Sturzgarantie:</strong> Ersetzt keinen ärztlichen Notdienst oder akute medizinische Versorgung.</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <i data-lucide="minus" class="w-5 h-5 text-brand-coral shrink-0 mt-1"></i>
+                <span data-i18n="lim_3"><strong class="text-brand-ink">Regulatorischer Weg:</strong> Medizinische Zertifizierungen und Vergütungswege werden schrittweise vorbereitet.</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         6. PILOT & KONTAKT + FAQ
+         ===================================================================== -->
+    <section id="pilot-kontakt" class="py-16 md:py-24 bg-white border-t border-stone-200/80 scroll-mt-20">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid lg:grid-cols-12 gap-12 items-start">
+
+          <!-- Formular -->
+          <div class="lg:col-span-7 bg-brand-offwhite rounded-3xl p-6 sm:p-10 border border-stone-200 soft-shadow">
+            <div class="space-y-3 mb-8">
+              <span data-i18n="form_tag" class="text-sm font-semibold uppercase tracking-wider text-brand-teal">Pilot & Austausch</span>
+              <h2 data-i18n="form_title" class="font-display font-bold text-3xl text-brand-ink">
+                Pilot kennenlernen oder Gespräch vereinbaren
+              </h2>
+              <p data-i18n="form_sub" class="text-base text-brand-muted">
+                Für Familien, Pflegedienste und Partner im Pilotprogramm. Wir melden uns persönlich bei Ihnen.
+              </p>
+            </div>
+
+            <div class="grid sm:grid-cols-2 gap-3 mb-8" role="tablist" aria-label="Anliegen auswählen">
+              <button type="button" role="tab" aria-selected="true" id="tab-pilot" class="form-tab p-4 rounded-2xl border-2 border-brand-teal bg-white text-left transition-all cursor-pointer">
+                <span data-i18n="tab_pilot_t" class="font-display font-bold text-base text-brand-teal block">Pilot kennenlernen</span>
+                <span data-i18n="tab_pilot_s" class="text-xs text-brand-muted">Interesse am Praxistest mit Radar & Wearable</span>
+              </button>
+              <button type="button" role="tab" aria-selected="false" id="tab-interview" class="form-tab p-4 rounded-2xl border-2 border-stone-200 bg-white/60 hover:bg-white text-left transition-all cursor-pointer">
+                <span data-i18n="tab_int_t" class="font-display font-bold text-base text-brand-ink block">15 Minuten über Ihren Alltag sprechen</span>
+                <span data-i18n="tab_int_s" class="text-xs text-brand-muted">Austausch zu Pflegealltag & Angehörigen-Info</span>
+              </button>
+            </div>
+
+            <form id="pilot-form" class="space-y-5" novalidate>
+              <input type="hidden" id="request-type" name="requestType" value="Pilot kennenlernen" />
+
+              <div class="bg-brand-sage/70 border border-brand-sageMid/40 rounded-xl p-3.5 text-sm text-brand-ink flex items-start gap-2.5">
+                <i data-lucide="lock" class="w-4 h-4 text-brand-teal shrink-0 mt-1"></i>
+                <span data-i18n="form_privacy_hint">Bitte geben Sie hier <strong>keine sensiblen Gesundheitsdaten oder Diagnosen</strong> ein.</span>
+              </div>
+
+              <div>
+                <label for="role" class="block font-semibold text-base text-brand-ink mb-2">
+                  <span data-i18n="lbl_role">Rolle</span> <span class="text-brand-coral">*</span>
+                </label>
+                <select id="role" name="role" required class="w-full px-4 py-3.5 rounded-xl bg-white border border-stone-300 text-brand-ink text-base focus:border-brand-teal">
+                  <option value="" data-i18n="opt_role_0">Bitte auswählen …</option>
+                  <option value="angehoerige" data-i18n="opt_role_1">Angehörige:r (Familie)</option>
+                  <option value="pflegedienst" data-i18n="opt_role_2">Pflegedienst / Pflegefachkraft / Arztpraxis</option>
+                  <option value="senior" data-i18n="opt_role_3">Ältere Person / Interessierte:r</option>
+                  <option value="sonstige" data-i18n="opt_role_4">Sonstige / Partner</option>
+                </select>
+              </div>
+
+              <div>
+                <label for="name" class="block font-semibold text-base text-brand-ink mb-2">
+                  <span data-i18n="lbl_name">Ihr Name</span> <span class="text-brand-coral">*</span>
+                </label>
+                <input type="text" id="name" name="name" required placeholder="z. B. Thomas Weber" class="w-full px-4 py-3.5 rounded-xl bg-white border border-stone-300 text-brand-ink text-base focus:border-brand-teal" />
+              </div>
+
+              <div>
+                <label for="situation" data-i18n="lbl_situation" class="block font-semibold text-base text-brand-ink mb-2">
+                  Kurze Beschreibung der Wohnsituation & Erwartung
+                </label>
+                <textarea id="situation" name="situation" rows="3" placeholder="z. B. Alleinlebende Großeltern, Wunsch nach passiver Vital- und Musteranalyse statt ständiger Anrufe …" class="w-full px-4 py-3.5 rounded-xl bg-white border border-stone-300 text-brand-ink text-base focus:border-brand-teal"></textarea>
+              </div>
+
+              <div class="grid sm:grid-cols-2 gap-4">
+                <div>
+                  <label for="contact-method" class="block font-semibold text-base text-brand-ink mb-2">
+                    <span data-i18n="lbl_cmethod">Bevorzugter Kontaktweg</span> <span class="text-brand-coral">*</span>
+                  </label>
+                  <select id="contact-method" name="contactMethod" required class="w-full px-4 py-3.5 rounded-xl bg-white border border-stone-300 text-brand-ink text-base focus:border-brand-teal">
+                    <option value="email" data-i18n="opt_email">Per E-Mail</option>
+                    <option value="telefon" data-i18n="opt_phone">Per Telefon</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="contact-value" class="block font-semibold text-base text-brand-ink mb-2">
+                    <span data-i18n="lbl_cval">E-Mail oder Telefonnummer</span> <span class="text-brand-coral">*</span>
+                  </label>
+                  <input type="text" id="contact-value" name="contactValue" required placeholder="name@beispiel.de" class="w-full px-4 py-3.5 rounded-xl bg-white border border-stone-300 text-brand-ink text-base focus:border-brand-teal" />
+                </div>
+              </div>
+
+              <label class="flex items-start gap-3 cursor-pointer pt-1">
+                <input type="checkbox" id="consent" required class="w-5 h-5 mt-1 accent-brand-teal rounded shrink-0" />
+                <span class="text-sm text-brand-ink">
+                  <span data-i18n="lbl_consent">Ich stimme der Kontaktaufnahme durch WirCare zur Bearbeitung meiner Anfrage zu.</span> <span class="text-brand-coral">*</span>
+                </span>
+              </label>
+
+              <div id="form-error" data-i18n="form_error" class="hidden p-4 rounded-xl bg-red-50 border border-red-200 text-red-800 text-sm font-medium" role="alert">
+                Bitte füllen Sie alle mit * markierten Pflichtfelder aus und bestätigen Sie die Einwilligung.
+              </div>
+
+              <button type="submit" id="submit-btn" class="w-full py-4 px-6 rounded-2xl bg-brand-coral hover:bg-brand-coralHover text-white font-semibold text-lg transition-colors shadow-sm cursor-pointer">
+                Anfrage für Pilot senden
+              </button>
+            </form>
+
+            <div id="form-success" class="hidden bg-white rounded-2xl p-8 border border-brand-teal/30 text-center space-y-4">
+              <div class="w-16 h-16 rounded-full bg-brand-sage text-brand-teal flex items-center justify-center mx-auto">
+                <i data-lucide="check-circle-2" class="w-9 h-9"></i>
+              </div>
+              <h3 data-i18n="succ_t" class="font-display font-bold text-2xl text-brand-ink">Vielen Dank für Ihre Nachricht!</h3>
+              <p data-i18n="succ_d" class="text-base text-brand-muted">
+                Wir haben Ihre Anfrage erhalten und melden uns zeitnah persönlich bei Ihnen.
+              </p>
+              <button type="button" id="reset-form-btn" data-i18n="succ_btn" class="mt-2 inline-flex items-center justify-center px-5 py-2.5 rounded-xl border border-stone-300 text-brand-ink font-medium text-sm hover:bg-brand-offwhite cursor-pointer">
+                Weitere Nachricht senden
+              </button>
+            </div>
+          </div>
+
+          <!-- FAQ -->
+          <div class="lg:col-span-5 space-y-6">
+            <div>
+              <span data-i18n="faq_tag" class="text-sm font-semibold uppercase tracking-wider text-brand-teal">Häufige Fragen</span>
+              <h2 data-i18n="faq_title" class="font-display font-bold text-3xl text-brand-ink mt-1">
+                Kurz & klar beantwortet
+              </h2>
+            </div>
+
+            <div class="space-y-3">
+              <details class="group bg-brand-offwhite rounded-2xl border border-stone-200/90 p-5" open>
+                <summary class="flex justify-between items-center font-display font-bold text-lg text-brand-ink cursor-pointer">
+                  <span data-i18n="faq_1_q">Wie funktioniert die Überwachung ohne Kameras?</span>
+                  <i data-lucide="chevron-down" class="w-5 h-5 text-brand-teal transition-transform group-open:rotate-180 shrink-0 ml-3"></i>
+                </summary>
+                <p data-i18n="faq_1_a" class="text-base text-brand-muted mt-3 pt-3 border-t border-stone-200/70">
+                  Kontaktlose Radarsensoren und ein Wearable erfassen passiv Bewegung, Atmung, Schlaf- und Vitalmuster im Hintergrund – ganz ohne Kameraaufnahmen.
+                </p>
+              </details>
+
+              <details class="group bg-brand-offwhite rounded-2xl border border-stone-200/90 p-5">
+                <summary class="flex justify-between items-center font-display font-bold text-lg text-brand-ink cursor-pointer">
+                  <span data-i18n="faq_2_q">Wer wird in Echtzeit informiert?</span>
+                  <i data-lucide="chevron-down" class="w-5 h-5 text-brand-teal transition-transform group-open:rotate-180 shrink-0 ml-3"></i>
+                </summary>
+                <p data-i18n="faq_2_a" class="text-base text-brand-muted mt-3 pt-3 border-t border-stone-200/70">
+                  Bei relevanten Vitalwerten oder von der KI erkannten Frühwarn-Trends werden Pflegekräfte, behandelnde Ärzte und Angehörige in Echtzeit mit den jeweiligen Details informiert.
+                </p>
+              </details>
+
+              <details class="group bg-brand-offwhite rounded-2xl border border-stone-200/90 p-5">
+                <summary class="flex justify-between items-center font-display font-bold text-lg text-brand-ink cursor-pointer">
+                  <span data-i18n="faq_3_q">Was passiert bei Strom- oder Internetausfall?</span>
+                  <i data-lucide="chevron-down" class="w-5 h-5 text-brand-teal transition-transform group-open:rotate-180 shrink-0 ml-3"></i>
+                </summary>
+                <p data-i18n="faq_3_a" class="text-base text-brand-muted mt-3 pt-3 border-t border-stone-200/70">
+                  Lokale Auswertung, Mobilfunk-Konnektivität (z. B. LTE) und ein Akku-Puffer sind als zentrale Ausfallsicherheitsbausteine für Strom- und Netzunterbrechungen vorgesehen.
+                </p>
+              </details>
+
+              <details class="group bg-brand-offwhite rounded-2xl border border-stone-200/90 p-5">
+                <summary class="flex justify-between items-center font-display font-bold text-lg text-brand-ink cursor-pointer">
+                  <span data-i18n="faq_4_q">Was, wenn das Wearable mal abgelegt wird?</span>
+                  <i data-lucide="chevron-down" class="w-5 h-5 text-brand-teal transition-transform group-open:rotate-180 shrink-0 ml-3"></i>
+                </summary>
+                <p data-i18n="faq_4_a" class="text-base text-brand-muted mt-3 pt-3 border-t border-stone-200/70">
+                  Raumbasierte Radarsensoren erfassen Präsenz, Bewegung und Muster weiterhin passiv im Raum, ohne dass Senioren durch ständiges Drängen bevormundet werden.
+                </p>
+              </details>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-brand-ink text-stone-300 py-14">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid md:grid-cols-3 gap-10 pb-10 border-b border-stone-700">
+        <div class="space-y-3">
+          <div class="flex items-center gap-2.5 text-white">
+            <div class="w-8 h-8 rounded-xl bg-brand-teal flex items-center justify-center">
+              <i data-lucide="activity" class="w-5 h-5"></i>
+            </div>
+            <span class="font-display font-bold text-lg">WirCare</span>
+          </div>
+          <p data-i18n="foot_desc" class="text-sm text-stone-400 leading-relaxed">
+            Nicht-invasive Überwachung mit Radar & Wearable, Vitalwertanalyse und KI-Frühwarnung mit Echtzeit-Information für Pflege, Ärzte und Familie.
+          </p>
+        </div>
+
+        <div class="space-y-2.5">
+          <h4 data-i18n="foot_nav_t" class="font-display font-bold text-white text-base">Navigation</h4>
+          <ul class="space-y-2 text-sm">
+            <li><a href="#start" data-i18n="nav_start" class="hover:text-white transition-colors">Start</a></li>
+            <li><a href="#so-funktionierts" data-i18n="nav_how" class="hover:text-white transition-colors">So funktioniert’s</a></li>
+            <li><a href="#fuer-familien" data-i18n="nav_stakeholders" class="hover:text-white transition-colors">Pflege & Familie</a></li>
+            <li><a href="#ueber-uns" data-i18n="nav_tech" class="hover:text-white transition-colors">Technik & Schutz</a></li>
+            <li><a href="#pilot-kontakt" data-i18n="nav_contact" class="hover:text-white transition-colors">Pilot & Kontakt</a></li>
+          </ul>
+        </div>
+
+        <div class="space-y-2.5">
+          <h4 data-i18n="foot_legal_t" class="font-display font-bold text-white text-base">Kontakt & Rechtliches</h4>
+          <p class="text-sm text-stone-400">E-Mail: hallo@wircare-pilot.de</p>
+          <div class="flex flex-wrap gap-4 pt-2 text-sm">
+            <button type="button" data-modal="impressum" data-i18n="legal_imp" class="legal-trigger underline hover:text-white cursor-pointer">Impressum</button>
+            <button type="button" data-modal="datenschutz" data-i18n="legal_priv" class="legal-trigger underline hover:text-white cursor-pointer">Datenschutz</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="pt-8 text-xs text-stone-400 flex flex-col sm:flex-row justify-between gap-4">
+        <p data-i18n="foot_copy">© 2026 WirCare (Pilotprojekt). Alle Darstellungen sind konzeptionell.</p>
+        <p data-i18n="foot_disc">In Validierung · Kein Ersatz für akute Notfall- oder ärztliche Versorgung.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Sticky Mobile CTA -->
+  <div class="fixed bottom-0 inset-x-0 z-30 md:hidden bg-white/95 backdrop-blur-md border-t border-stone-200 p-3 shadow-lg">
+    <a href="#pilot-kontakt" data-select-tab="pilot" class="cta-trigger flex items-center justify-center gap-2 w-full py-3.5 px-5 rounded-xl bg-brand-coral text-white font-semibold text-base shadow-sm">
+      <span data-i18n="cta_primary">Pilot kennenlernen</span>
+      <i data-lucide="arrow-right" class="w-4 h-4"></i>
+    </a>
+  </div>
+
+  <!-- Rechtliches Modal -->
+  <div id="legal-modal" class="hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-xl space-y-4">
+      <div class="flex justify-between items-center border-b border-stone-200 pb-3">
+        <h3 id="modal-title" class="font-display font-bold text-xl text-brand-ink">Rechtliche Hinweise</h3>
+        <button type="button" id="close-modal" class="p-2 rounded-xl hover:bg-stone-100 text-brand-ink cursor-pointer" aria-label="Fenster schließen">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <div id="modal-body" class="text-sm text-brand-muted space-y-3 max-h-80 overflow-y-auto"></div>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       JAVASCRIPT: DE/EN LANGUAGE SWITCHER, SIMULATOR, TABS & FORMULAR
+       ===================================================================== -->
+  <script>
+    lucide.createIcons();
+
+    let currentLang = 'de';
+    let currentScenario = 'ok';
+    let currentFormTab = 'pilot';
+
+    const translations = {
+      de: {
+        page_title: "WirCare – Vorausschauende, berührungslose Gesundheitsüberwachung für Senioren",
+        skip_link: "Direkt zum Hauptinhalt springen",
+        banner_pilot: "Pilot- & Validierungsphase: Nicht-invasive Sensorik, Vitalwerte & KI-Frühwarnung für Pflegekräfte, Ärzte und Angehörige.",
+        brand_sub: "KI-Seniorenbegleiter · Pilot",
+        nav_start: "Start",
+        nav_how: "So funktioniert’s",
+        nav_stakeholders: "Pflege & Familie",
+        nav_tech: "Technik & Schutz",
+        nav_contact: "Pilot & Kontakt",
+        hero_badge: "Radarsensoren & Wearables · KI-Gesundheitsanalyse",
+        hero_title_1: "Krankheiten früh erkennen.",
+        hero_title_2: "Ohne störende Anrufe.",
+        hero_subline: "WirCare erfasst Vitalwerte und Verhaltensmuster passiv über Radarsensoren und Wearables, nutzt KI zur Früherkennung möglicher gesundheitlicher Veränderungen und informiert Pflegekräfte, Ärzte sowie Angehörige in Echtzeit.",
+        cta_primary: "Pilot kennenlernen",
+        cta_secondary: "Echtzeit-Ablauf testen",
+        cta_research: "15 Minuten über Ihren Alltag sprechen",
+        hero_note: "Wie ein leiser Rauchmelder im Hintergrund – ohne Kameras und ohne tägliche Kontrollanrufe.",
+        mockup_badge_concept: "Konzept-Darstellung",
+        mockup_badge_nocam: "Keine Kamera",
+        hero_v1_l: "Atmung & Puls",
+        hero_v1_v: "Radar + Wearable",
+        hero_v2_l: "Schlaf & Bewegung",
+        hero_v2_v: "Passives Muster",
+        mockup_alert_t: "Echtzeit-Frühwarnung · Pflege & Arzt",
+        mockup_alert_d: "„Auffälliger Trend bei nächtlicher Atemfrequenz und Ruhebewegung erkannt – Details live geteilt.“",
+        mockup_done: "Keine täglichen Kontrollanrufe nötig",
+        prob_tag: "Ausgangslage & Bedarf",
+        prob_title: "Von reaktiver Pflege zu vorausschauender Früherkennung",
+        prob_sub: "In Deutschland sind rund 5,7 Millionen Menschen pflegebedürftig – etwa 86 % (4,9 Millionen) leben zu Hause, während Pflegekapazitäten knapp sind und sich gesundheitliche Verschlechterungen oft schleichend anbahnen.",
+        stat_1: "Pflegebedürftige in Deutschland (Statistisches Bundesamt)",
+        stat_2: "leben im eigenen Zuhause – oft mit Angehörigen oder ambulantem Dienst",
+        stat_3: "Direkte Information an Pflegekraft, Arzt & Familie bei Auffälligkeiten",
+        smoke_title: "Wie ein stiller Rauchmelder",
+        smoke_desc: "Einen Rauchmelder hängen wir an die Decke, damit er früh warnt, bevor ein Feuer das ganze Haus erfasst. WirCare arbeitet ähnlich unauffällig im Hintergrund: Radarsensoren und Wearables erfassen subtile Veränderungen in Atmung, Vitalwerten und Bewegung, bevor eine akute Krise oder ein Krankenhausaufenthalt entsteht.",
+        calls_title: "Keine ständigen Kontrollanrufe mehr",
+        calls_desc: "Tägliche Anrufe „Geht es dir gut?“ werden oft aus Rücksicht mit „Alles bestens“ beantwortet – selbst wenn sich Werte oder Schlafmuster bereits verändern. WirCare liefert Pflegekräften, Ärzten und Angehörigen fundierte Informationen in Echtzeit, ohne den Alltag zu stören.",
+        how_tag: "Kernfunktionen",
+        how_title: "Passiv messen, mit KI prüfen, in Echtzeit informieren",
+        how_sub: "Kein kompliziertes Bedienen und keine lästigen Erinnerungs- oder Kontrollanrufe – der Fokus liegt auf kontinuierlicher Vital- und Musteranalyse.",
+        step_1_t: "Radar & Wearable",
+        step_1_d: "Nicht-invasive Radarsensoren im Raum und ein Wearable erfassen passiv Bewegung, Schlaf, Ruhe und körperliche Signale.",
+        step_2_t: "Vitalwerte messen",
+        step_2_d: "Tägliche Gesundheits- und Vitalparameter wie Atemfrequenz, Puls/Herzfrequenzmuster und Aktivitätsverläufe werden erfasst.",
+        step_3_t: "KI-Frühwarnung",
+        step_3_d: "Die KI prüft Vitalwerte und Muster auf Abweichungen, um mögliche gesundheitliche Risiken frühzeitig einzuschätzen.",
+        step_4_t: "Echtzeit-Info",
+        step_4_d: "Alle relevanten Details gehen in Echtzeit an Pflegekraft, Arzt und Angehörige – ohne tägliche Kontrollanrufe.",
+        demo_tag: "Interaktive Simulation",
+        demo_title: "Vitalwerte, KI-Prüfung & Echtzeit-Meldung erleben",
+        demo_sub: "Wechseln Sie zwischen stabilem Alltag und früh erkannter Auffälligkeit.",
+        demo_btn_1: "1. Vitalwerte stabil",
+        demo_btn_2: "2. KI erkennt Frühwarn-Trend",
+        demo_home_title: "Radar, Wearable & Vitalwerte",
+        demo_home_badge: "Passiv & berührungslos",
+        demo_home_note: "Lokale Auswertung + Mobilfunk-Fallback & Akku-Puffer bei Strom-/Internetausfall.",
+        demo_fam_title: "Echtzeit-Information (Konzept)",
+        demo_log_title: "Empfänger in Echtzeit",
+        ben_tag: "Vernetzte Unterstützung",
+        ben_title: "Entlastung für Pflege & Ärzte – Ruhe für Angehörige",
+        ben_sub: "Statt erst im Notfall zu reagieren oder Senioren mit täglichen Kontrollanrufen zu belasten, erhalten alle Beteiligten relevante Messwerte und Hinweise in Echtzeit.",
+        role_nurse_t: "Pflegekräfte",
+        role_nurse_d: "Frühe Hinweise auf Veränderungen bei Vitalwerten, Schlaf oder Bewegung helfen, gezielt einzugreifen, unnötige Fahrten zu reduzieren und mehr Menschen zu betreuen.",
+        role_doc_t: "Ärztinnen & Ärzte",
+        role_doc_d: "Bei auffälligen KI-Trends stehen erfasste Vitaldaten und Verlaufsdetails zeitnah zur medizinischen Einordnung und frühzeitigen Abklärung bereit.",
+        role_fam_t: "Angehörige & Senioren",
+        role_fam_d: "Keine ständigen Kontrollanrufe mehr, die den Alltag stören – Angehörige werden in Echtzeit informiert, wenn sich Werte verändern, und Senioren bleiben unabhängig.",
+        tech_tag: "Architektur & Transparenz",
+        tech_title: "Ausfallsicher, datensparsam und ehrlich eingeordnet",
+        tech_sub: "Da wir uns in der Pilot- und Validierungsphase befinden, kommunizieren wir technische Stärken ebenso klar wie regulatorische und medizinische Grenzen.",
+        res_badge: "Resilienz & Privatsphäre",
+        res_title: "Auch bei Strom- oder Internetausfall bedacht",
+        res_1: "<strong class='text-brand-ink'>Kein Breitband-Zwang:</strong> Lokale Edge-Verarbeitung und Mobilfunk-Anbindung (z. B. LTE) helfen, wenn das Heim-WLAN ausfällt.",
+        res_2: "<strong class='text-brand-ink'>Akku-Puffer bei Stromausfall:</strong> Eine integrierte Batteriereserve überbrückt Unterbrechungen im Rahmen definierter Laufzeiten.",
+        res_3: "<strong class='text-brand-ink'>Keine Kameras:</strong> Radar- und Wearable-Sensorik schützt die Privatsphäre zu Hause.",
+        lim_badge: "Pilot- & Validierungsstatus",
+        lim_title: "Klare Grenzen statt falscher Versprechen",
+        lim_1: "<strong class='text-brand-ink'>Frühe Entwicklungsphase:</strong> KI-Frühwarnmodelle werden gemeinsam mit Pflegepartnern und Familien validiert.",
+        lim_2: "<strong class='text-brand-ink'>Keine garantierte Notfall- oder Sturzgarantie:</strong> Ersetzt keinen ärztlichen Notdienst oder akute medizinische Versorgung.",
+        lim_3: "<strong class='text-brand-ink'>Regulatorischer Weg:</strong> Medizinische Zertifizierungen und Vergütungswege werden schrittweise vorbereitet.",
+        form_tag: "Pilot & Austausch",
+        form_title: "Pilot kennenlernen oder Gespräch vereinbaren",
+        form_sub: "Für Familien, Pflegedienste und Partner im Pilotprogramm. Wir melden uns persönlich bei Ihnen.",
+        tab_pilot_t: "Pilot kennenlernen",
+        tab_pilot_s: "Interesse am Praxistest mit Radar & Wearable",
+        tab_int_t: "15 Minuten über Ihren Alltag sprechen",
+        tab_int_s: "Austausch zu Pflegealltag & Angehörigen-Info",
+        form_privacy_hint: "Bitte geben Sie hier <strong>keine sensiblen Gesundheitsdaten oder Diagnosen</strong> ein.",
+        lbl_role: "Rolle",
+        opt_role_0: "Bitte auswählen …",
+        opt_role_1: "Angehörige:r (Familie)",
+        opt_role_2: "Pflegedienst / Pflegefachkraft / Arztpraxis",
+        opt_role_3: "Ältere Person / Interessierte:r",
+        opt_role_4: "Sonstige / Partner",
+        lbl_name: "Ihr Name",
+        ph_name: "z. B. Thomas Weber",
+        lbl_situation: "Kurze Beschreibung der Wohnsituation & Erwartung",
+        ph_situation: "z. B. Alleinlebende Großeltern, Wunsch nach passiver Vital- und Musteranalyse statt ständiger Anrufe …",
+        lbl_cmethod: "Bevorzugter Kontaktweg",
+        opt_email: "Per E-Mail",
+        opt_phone: "Per Telefon",
+        lbl_cval: "E-Mail oder Telefonnummer",
+        ph_email: "name@beispiel.de",
+        ph_phone: "z. B. 0170 1234567",
+        lbl_consent: "Ich stimme der Kontaktaufnahme durch WirCare zur Bearbeitung meiner Anfrage zu.",
+        form_error: "Bitte füllen Sie alle mit * markierten Pflichtfelder aus und bestätigen Sie die Einwilligung.",
+        btn_submit_pilot: "Anfrage für Pilot senden",
+        btn_submit_int: "Gesprächswunsch senden",
+        succ_t: "Vielen Dank für Ihre Nachricht!",
+        succ_d: "Wir haben Ihre Anfrage erhalten und melden uns zeitnah persönlich bei Ihnen.",
+        succ_btn: "Weitere Nachricht senden",
+        faq_tag: "Häufige Fragen",
+        faq_title: "Kurz & klar beantwortet",
+        faq_1_q: "Wie funktioniert die Überwachung ohne Kameras?",
+        faq_1_a: "Kontaktlose Radarsensoren und ein Wearable erfassen passiv Bewegung, Atmung, Schlaf- und Vitalmuster im Hintergrund – ganz ohne Kameraaufnahmen.",
+        faq_2_q: "Wer wird in Echtzeit informiert?",
+        faq_2_a: "Bei relevanten Vitalwerten oder von der KI erkannten Frühwarn-Trends werden Pflegekräfte, behandelnde Ärzte und Angehörige in Echtzeit mit den jeweiligen Details informiert.",
+        faq_3_q: "Was passiert bei Strom- oder Internetausfall?",
+        faq_3_a: "Lokale Auswertung, Mobilfunk-Konnektivität (z. B. LTE) und ein Akku-Puffer sind als zentrale Ausfallsicherheitsbausteine für Strom- und Netzunterbrechungen vorgesehen.",
+        faq_4_q: "Was, wenn das Wearable mal abgelegt wird?",
+        faq_4_a: "Raumbasierte Radarsensoren erfassen Präsenz, Bewegung und Muster weiterhin passiv im Raum, ohne dass Senioren durch ständiges Drängen bevormundet werden.",
+        foot_desc: "Nicht-invasive Überwachung mit Radar & Wearable, Vitalwertanalyse und KI-Frühwarnung mit Echtzeit-Information für Pflege, Ärzte und Familie.",
+        foot_nav_t: "Navigation",
+        foot_legal_t: "Kontakt & Rechtliches",
+        legal_imp: "Impressum",
+        legal_priv: "Datenschutz",
+        foot_copy: "© 2026 WirCare (Pilotprojekt). Alle Darstellungen sind konzeptionell.",
+        foot_disc: "In Validierung · Kein Ersatz für akute Notfall- oder ärztliche Versorgung."
+      },
+      en: {
+        page_title: "WirCare – Proactive, Non-Invasive Health Monitoring for Older Adults",
+        skip_link: "Skip directly to main content",
+        banner_pilot: "Pilot & Validation Phase: Non-invasive sensors, vitals & AI early warning for nurses, doctors, and family members.",
+        brand_sub: "AI Senior Companion · Pilot",
+        nav_start: "Home",
+        nav_how: "How it works",
+        nav_stakeholders: "Care & Family",
+        nav_tech: "Tech & Resilience",
+        nav_contact: "Pilot & Contact",
+        hero_badge: "Radar Sensors & Wearables · AI Health Analytics",
+        hero_title_1: "Spot illness early.",
+        hero_title_2: "Skip repetitive check-in calls.",
+        hero_subline: "WirCare passively captures health vitals and behavioral patterns via radar monitors and wearables, uses AI to predict potential illness in the near future, and shares real-time details with nurses, doctors, and family members.",
+        cta_primary: "Explore the pilot",
+        cta_secondary: "Test real-time flow",
+        cta_research: "Talk 15 minutes about your routine",
+        hero_note: "Like a silent smoke detector in the background – no cameras and no repetitive daily check-in calls.",
+        mockup_badge_concept: "Concept Visualization",
+        mockup_badge_nocam: "No Camera",
+        hero_v1_l: "Breathing & Pulse",
+        hero_v1_v: "Radar + Wearable",
+        hero_v2_l: "Sleep & Mobility",
+        hero_v2_v: "Passive Pattern",
+        mockup_alert_t: "Real-Time Early Alert · Nurse & Doctor",
+        mockup_alert_d: "“Subtle shift detected in nighttime respiratory rate and rest movement – full details shared live.”",
+        mockup_done: "No repetitive daily check-in calls needed",
+        prob_tag: "Context & Need",
+        prob_title: "From reactive care to proactive early prediction",
+        prob_sub: "Around 5.7 million people in Germany need long-term care – roughly 86% (4.9 million) live at home, while nursing capacity is tight and health decline often starts subtly.",
+        stat_1: "People needing long-term care in Germany (Destatis)",
+        stat_2: "live at home – largely supported by family or outpatient care",
+        stat_3: "Real-time updates to nurse, doctor & family when trends shift",
+        smoke_title: "Like a silent smoke detector",
+        smoke_desc: "We install a smoke detector to warn early before a fire spreads through the house. WirCare works quietly in the background: radar monitors and wearables track subtle changes in breathing, vitals, and movement before a health issue escalates into hospitalization.",
+        calls_title: "No need for repetitive check-in calls",
+        calls_desc: "Daily “Are you okay?” calls often get a polite “I’m fine” even when vitals or sleep patterns begin shifting. WirCare gives nurses, doctors, and family members real-time details without intruding on daily life.",
+        how_tag: "Core Capabilities",
+        how_title: "Monitor passively, analyze with AI, alert in real time",
+        how_sub: "No complicated apps and no repetitive check-in calls – focused on non-invasive vitals, AI risk prediction, and real-time care visibility.",
+        step_1_t: "Radar & Wearable",
+        step_1_d: "Non-invasive room radar monitors and a wearable passively capture movement, sleep, rest, and physiological signals.",
+        step_2_t: "Measure Health Vitals",
+        step_2_d: "Daily health vitals such as breathing rate, heart/pulse patterns, and activity baselines are measured.",
+        step_3_t: "AI Prediction",
+        step_3_d: "AI evaluates health vitals and trends to flag potential illness risks that may emerge in the near future.",
+        step_4_t: "Real-Time Updates",
+        step_4_d: "All relevant details are shared in real time with the nurse, doctor, and family members – replacing repetitive calls.",
+        demo_tag: "Interactive Simulation",
+        demo_title: "Explore vitals, AI analysis & real-time alerts",
+        demo_sub: "Switch between stable daily vitals and an early predictive trend.",
+        demo_btn_1: "1. Vitals stable",
+        demo_btn_2: "2. AI flags early trend",
+        demo_home_title: "Radar, Wearable & Vitals",
+        demo_home_badge: "Passive & non-invasive",
+        demo_home_note: "Local edge processing + cellular fallback (LTE) & battery backup for power/internet outages.",
+        demo_fam_title: "Real-Time Care Feed (Concept)",
+        demo_log_title: "Real-Time Recipients",
+        ben_tag: "Connected Care",
+        ben_title: "Empowering nurses & doctors – peace of mind for family",
+        ben_sub: "Instead of reacting late or making repetitive check-in calls, nurses, doctors, and families receive real-time details when vitals or patterns shift.",
+        role_nurse_t: "Nurses",
+        role_nurse_d: "Early signals on vital shifts, sleep, and mobility help nurses intervene sooner, reduce unnecessary visits, and support more seniors.",
+        role_doc_t: "Doctors",
+        role_doc_d: "When AI identifies an emerging health risk trend, captured health vitals and details are available promptly for clinical review.",
+        role_fam_t: "Family & Seniors",
+        role_fam_d: "No repetitive daily check-in calls – family members get real-time details when something changes, while seniors keep their independence.",
+        tech_tag: "Architecture & Transparency",
+        tech_title: "Resilient, privacy-first, and honest about scope",
+        tech_sub: "Because we are in the pilot and validation stage, we communicate resilience features alongside clear clinical and regulatory boundaries.",
+        res_badge: "Resilience & Privacy",
+        res_title: "Designed for power and internet disruptions",
+        res_1: "<strong class='text-brand-ink'>No broadband dependency:</strong> On-device processing and cellular connectivity (e.g., LTE) support continuity when home Wi-Fi drops.",
+        res_2: "<strong class='text-brand-ink'>Battery backup during outages:</strong> Reserve battery power bridges power disruptions within defined operating windows.",
+        res_3: "<strong class='text-brand-ink'>No cameras:</strong> Radar and wearable sensing protect privacy in the home.",
+        lim_badge: "Pilot & Validation Stage",
+        lim_title: "Clear boundaries instead of overpromising",
+        lim_1: "<strong class='text-brand-ink'>Early validation stage:</strong> AI prediction models are being validated with care partners and families.",
+        lim_2: "<strong class='text-brand-ink'>No guaranteed emergency or fall guarantee:</strong> Does not replace emergency services or acute medical care.",
+        lim_3: "<strong class='text-brand-ink'>Regulatory roadmap:</strong> Medical device compliance and reimbursement pathways are being pursued step by step.",
+        form_tag: "Pilot & Contact",
+        form_title: "Explore the pilot or schedule a call",
+        form_sub: "For families, care providers, and partners interested in our pilot. We will reach out personally.",
+        tab_pilot_t: "Explore the pilot",
+        tab_pilot_s: "Interest in testing radar & wearable monitoring",
+        tab_int_t: "Talk 15 minutes about your routine",
+        tab_int_s: "Share care workflows & family needs",
+        form_privacy_hint: "Please do <strong>not enter sensitive health data or medical diagnoses</strong> here.",
+        lbl_role: "Role",
+        opt_role_0: "Please select …",
+        opt_role_1: "Family member",
+        opt_role_2: "Nursing service / Nurse / Medical practice",
+        opt_role_3: "Older adult / Interested individual",
+        opt_role_4: "Other / Partner",
+        lbl_name: "Your name",
+        ph_name: "e.g., Thomas Weber",
+        lbl_situation: "Brief description of living situation & expectations",
+        ph_situation: "e.g., Senior living at home, looking for passive vitals & early trend alerts instead of repetitive calls …",
+        lbl_cmethod: "Preferred contact method",
+        opt_email: "By E-Mail",
+        opt_phone: "By Phone",
+        lbl_cval: "E-mail address or phone number",
+        ph_email: "name@example.com",
+        ph_phone: "e.g., +49 170 1234567",
+        lbl_consent: "I agree that WirCare may contact me to respond to my inquiry.",
+        form_error: "Please complete all required fields marked with * and confirm consent.",
+        btn_submit_pilot: "Send pilot inquiry",
+        btn_submit_int: "Request conversation",
+        succ_t: "Thank you for your message!",
+        succ_d: "We have received your inquiry and will follow up personally soon.",
+        succ_btn: "Send another message",
+        faq_tag: "Frequently Asked Questions",
+        faq_title: "Short & clear answers",
+        faq_1_q: "How does monitoring work without cameras?",
+        faq_1_a: "Contactless radar monitors and a wearable passively track movement, breathing, sleep, and vital patterns in the background without using cameras.",
+        faq_2_q: "Who receives real-time information?",
+        faq_2_a: "When vitals or AI early-warning trends indicate a potential issue, details are shared in real time with the nurse, doctor, and family members.",
+        faq_3_q: "What happens if internet or electricity goes out?",
+        faq_3_a: "Local processing, cellular connectivity (such as LTE), and battery backup are key resilience elements planned for internet and power disruptions.",
+        faq_4_q: "What if the senior forgets or sets aside the wearable?",
+        faq_4_a: "Room-based radar monitors continue tracking presence, movement, and patterns passively without nagging the senior.",
+        foot_desc: "Non-invasive radar & wearable monitoring, health vitals measurement, and AI early prediction with real-time updates for nurse, doctor, and family.",
+        foot_nav_t: "Navigation",
+        foot_legal_t: "Contact & Legal",
+        legal_imp: "Imprint",
+        legal_priv: "Privacy Policy",
+        foot_copy: "© 2026 WirCare (Pilot Project). All visuals are conceptual.",
+        foot_disc: "In validation · Not a substitute for emergency or acute medical care."
+      }
+    };
+
+    const scenariosData = {
+      de: {
+        ok: {
+          homeFeed: `
+            <div class="bg-white rounded-xl p-4 border border-stone-200/80 flex justify-between items-center">
+              <div>
+                <span class="text-xs font-semibold text-brand-teal">Radar · Atmung & Bewegung</span>
+                <p class="text-sm font-medium text-brand-ink mt-0.5">Ruhiges Muster, normaler Schlafrhythmus</p>
+              </div>
+              <span class="text-xs font-semibold text-brand-teal bg-brand-sage px-2.5 py-1 rounded-lg">Normal</span>
+            </div>
+            <div class="bg-white rounded-xl p-4 border border-stone-200/80 flex justify-between items-center">
+              <div>
+                <span class="text-xs font-semibold text-brand-teal">Wearable · Tägliche Vitalwerte</span>
+                <p class="text-sm font-medium text-brand-ink mt-0.5">Puls & Aktivitätsniveau im gewohnten Bereich</p>
+              </div>
+              <span class="text-xs font-semibold text-brand-teal bg-brand-sage px-2.5 py-1 rounded-lg">Stabil</span>
+            </div>
+            <div class="bg-brand-sage/70 rounded-xl p-4 border border-brand-sageMid/30">
+              <span class="text-xs font-semibold text-brand-teal">KI-Prüfung</span>
+              <p class="text-sm text-brand-ink mt-0.5">Keine auffälligen Abweichungen – kein Kontrollanruf nötig.</p>
+            </div>
+          `,
+          badgeText: 'Stabil · Echtzeit aktiv',
+          badgeClass: 'px-3 py-1 rounded-full text-xs font-semibold bg-brand-sage text-brand-teal',
+          notification: `
+            <p class="font-semibold text-sm text-brand-ink">Echtzeit-Status: Alles im Normbereich</p>
+            <p class="text-sm text-brand-muted mt-0.5">Messwerte werden laufend aktualisiert. Niemand muss täglich anrufen, nur um nachzufragen.</p>
+          `,
+          notificationBg: 'rounded-xl p-4 border border-brand-sageMid/40 bg-brand-sage/30',
+          log: `
+            <li class="flex justify-between items-center py-1.5 border-b border-stone-100">
+              <span class="text-brand-ink font-medium">Pflegekraft</span>
+              <span class="text-brand-teal">Tagesverlauf sichtbar</span>
+            </li>
+            <li class="flex justify-between items-center py-1.5 border-b border-stone-100">
+              <span class="text-brand-ink font-medium">Arzt</span>
+              <span class="text-brand-muted">Vitalwerte abrufbar</span>
+            </li>
+            <li class="flex justify-between items-center py-1.5">
+              <span class="text-brand-ink font-medium">Angehörige</span>
+              <span class="text-brand-teal">Entspannt · kein Anruf nötig</span>
+            </li>
+          `
+        },
+        escalate: {
+          homeFeed: `
+            <div class="bg-white rounded-xl p-4 border border-amber-300 flex justify-between items-center">
+              <div>
+                <span class="text-xs font-semibold text-brand-coral">Radar · Nächtliche Atemfrequenz</span>
+                <p class="text-sm font-medium text-brand-ink mt-0.5">Leichter Anstieg über mehrere Tage + unruhiger Schlaf</p>
+              </div>
+              <span class="text-xs font-semibold text-brand-coral bg-brand-coral/15 px-2.5 py-1 rounded-lg">Trend</span>
+            </div>
+            <div class="bg-white rounded-xl p-4 border border-amber-300 flex justify-between items-center">
+              <div>
+                <span class="text-xs font-semibold text-brand-coral">Wearable & Aktivität</span>
+                <p class="text-sm font-medium text-brand-ink mt-0.5">Reduzierte Tagesbewegung & veränderte Vitalwerte</p>
+              </div>
+              <span class="text-xs font-semibold text-brand-coral bg-brand-coral/15 px-2.5 py-1 rounded-lg">Auffällig</span>
+            </div>
+            <div class="bg-amber-50 rounded-xl p-4 border border-amber-200">
+              <span class="text-xs font-semibold text-amber-800">KI-Frühwarn-Einschätzung</span>
+              <p class="text-sm text-brand-ink font-medium mt-0.5">Früher Hinweis auf mögliche gesundheitliche Verschlechterung – Details in Echtzeit geteilt.</p>
+            </div>
+          `,
+          badgeText: 'Echtzeit-Info gesendet',
+          badgeClass: 'px-3 py-1 rounded-full text-xs font-semibold bg-brand-coral/15 text-brand-coral',
+          notification: `
+            <p class="font-semibold text-sm text-brand-ink">Sofortige Echtzeit-Meldung mit Vital-Details</p>
+            <p class="text-sm text-brand-muted mt-0.5">Alle erfassten Werte und Verlaufsdetails wurden gleichzeitig an Pflegekraft, Arzt und Angehörige übermittelt.</p>
+          `,
+          notificationBg: 'rounded-xl p-4 border border-brand-coral/30 bg-brand-coral/5',
+          log: `
+            <li class="flex justify-between items-center py-1.5 border-b border-stone-100">
+              <span class="text-brand-ink font-medium">Pflegekraft</span>
+              <span class="text-brand-coral font-semibold">Echtzeit-Alarm + Details</span>
+            </li>
+            <li class="flex justify-between items-center py-1.5 border-b border-stone-100">
+              <span class="text-brand-ink font-medium">Arzt</span>
+              <span class="text-brand-coral font-semibold">Vitaldaten geteilt</span>
+            </li>
+            <li class="flex justify-between items-center py-1.5">
+              <span class="text-brand-ink font-medium">Angehörige</span>
+              <span class="text-brand-coral font-semibold">Live informiert</span>
+            </li>
+          `
+        }
+      },
+      en: {
+        ok: {
+          homeFeed: `
+            <div class="bg-white rounded-xl p-4 border border-stone-200/80 flex justify-between items-center">
+              <div>
+                <span class="text-xs font-semibold text-brand-teal">Radar · Breathing & Movement</span>
+                <p class="text-sm font-medium text-brand-ink mt-0.5">Calm baseline, steady sleep pattern</p>
+              </div>
+              <span class="text-xs font-semibold text-brand-teal bg-brand-sage px-2.5 py-1 rounded-lg">Normal</span>
+            </div>
+            <div class="bg-white rounded-xl p-4 border border-stone-200/80 flex justify-between items-center">
+              <div>
+                <span class="text-xs font-semibold text-brand-teal">Wearable · Daily Health Vitals</span>
+                <p class="text-sm font-medium text-brand-ink mt-0.5">Pulse & activity within expected range</p>
+              </div>
+              <span class="text-xs font-semibold text-brand-teal bg-brand-sage px-2.5 py-1 rounded-lg">Stable</span>
+            </div>
+            <div class="bg-brand-sage/70 rounded-xl p-4 border border-brand-sageMid/30">
+              <span class="text-xs font-semibold text-brand-teal">AI Check</span>
+              <p class="text-sm text-brand-ink mt-0.5">No concerning shifts detected – no check-in call needed.</p>
+            </div>
+          `,
+          badgeText: 'Stable · Real-time active',
+          badgeClass: 'px-3 py-1 rounded-full text-xs font-semibold bg-brand-sage text-brand-teal',
+          notification: `
+            <p class="font-semibold text-sm text-brand-ink">Real-Time Status: Vitals within baseline</p>
+            <p class="text-sm text-brand-muted mt-0.5">Metrics update continuously. No repetitive daily calls just to ask if everything is fine.</p>
+          `,
+          notificationBg: 'rounded-xl p-4 border border-brand-sageMid/40 bg-brand-sage/30',
+          log: `
+            <li class="flex justify-between items-center py-1.5 border-b border-stone-100">
+              <span class="text-brand-ink font-medium">Nurse</span>
+              <span class="text-brand-teal">Trend visible</span>
+            </li>
+            <li class="flex justify-between items-center py-1.5 border-b border-stone-100">
+              <span class="text-brand-ink font-medium">Doctor</span>
+              <span class="text-brand-muted">Vitals available</span>
+            </li>
+            <li class="flex justify-between items-center py-1.5">
+              <span class="text-brand-ink font-medium">Family</span>
+              <span class="text-brand-teal">At ease · no call needed</span>
+            </li>
+          `
+        },
+        escalate: {
+          homeFeed: `
+            <div class="bg-white rounded-xl p-4 border border-amber-300 flex justify-between items-center">
+              <div>
+                <span class="text-xs font-semibold text-brand-coral">Radar · Nighttime Breathing Rate</span>
+                <p class="text-sm font-medium text-brand-ink mt-0.5">Multi-day upward shift + fragmented sleep</p>
+              </div>
+              <span class="text-xs font-semibold text-brand-coral bg-brand-coral/15 px-2.5 py-1 rounded-lg">Trend</span>
+            </div>
+            <div class="bg-white rounded-xl p-4 border border-amber-300 flex justify-between items-center">
+              <div>
+                <span class="text-xs font-semibold text-brand-coral">Wearable & Activity</span>
+                <p class="text-sm font-medium text-brand-ink mt-0.5">Lower daytime mobility & vital sign shift</p>
+              </div>
+              <span class="text-xs font-semibold text-brand-coral bg-brand-coral/15 px-2.5 py-1 rounded-lg">Flagged</span>
+            </div>
+            <div class="bg-amber-50 rounded-xl p-4 border border-amber-200">
+              <span class="text-xs font-semibold text-amber-800">AI Early-Warning Prediction</span>
+              <p class="text-sm text-brand-ink font-medium mt-0.5">Early signal of possible near-term illness – full details shared in real time.</p>
+            </div>
+          `,
+          badgeText: 'Real-time alert sent',
+          badgeClass: 'px-3 py-1 rounded-full text-xs font-semibold bg-brand-coral/15 text-brand-coral',
+          notification: `
+            <p class="font-semibold text-sm text-brand-ink">Real-Time Notification with Vital Details</p>
+            <p class="text-sm text-brand-muted mt-0.5">Measured vitals and trend details were sent simultaneously to the nurse, doctor, and family members.</p>
+          `,
+          notificationBg: 'rounded-xl p-4 border border-brand-coral/30 bg-brand-coral/5',
+          log: `
+            <li class="flex justify-between items-center py-1.5 border-b border-stone-100">
+              <span class="text-brand-ink font-medium">Nurse</span>
+              <span class="text-brand-coral font-semibold">Real-time alert + details</span>
+            </li>
+            <li class="flex justify-between items-center py-1.5 border-b border-stone-100">
+              <span class="text-brand-ink font-medium">Doctor</span>
+              <span class="text-brand-coral font-semibold">Vitals shared</span>
+            </li>
+            <li class="flex justify-between items-center py-1.5">
+              <span class="text-brand-ink font-medium">Family</span>
+              <span class="text-brand-coral font-semibold">Notified live</span>
+            </li>
+          `
+        }
+      }
+    };
+
+    const legalContentData = {
+      de: {
+        impressum: {
+          title: 'Impressum (Pilotprojekt)',
+          body: '<p><strong>Angaben gemäß § 5 DDG:</strong><br>WirCare – Pilotprojekt für berührungslose Vital- & KI-Frühwarnsensorik<br>Musterstraße 12, 10115 Berlin</p><p><strong>Kontakt:</strong><br>E-Mail: hallo@wircare-pilot.de</p>'
+        },
+        datenschutz: {
+          title: 'Datenschutzhinweise',
+          body: '<p>Wir verarbeiten Angaben aus dem Kontaktformular ausschließlich zur Bearbeitung Ihrer Anfrage. Bitte geben Sie keine sensiblen Gesundheitsdaten über das Formular ein.</p>'
+        }
+      },
+      en: {
+        impressum: {
+          title: 'Imprint (Pilot Project)',
+          body: '<p><strong>Information pursuant to § 5 DDG:</strong><br>WirCare – Pilot Project for Non-Invasive Vitals & AI Early-Warning Sensing<br>Musterstraße 12, 10115 Berlin, Germany</p><p><strong>Contact:</strong><br>E-Mail: hallo@wircare-pilot.de</p>'
+        },
+        datenschutz: {
+          title: 'Privacy Policy',
+          body: '<p>We process details submitted via the contact form solely to respond to your inquiry. Please do not enter sensitive health data in the form.</p>'
+        }
+      }
+    };
+
+    function setLanguage(lang) {
+      currentLang = lang;
+      document.documentElement.lang = lang;
+      const dict = translations[lang];
+      document.title = dict.page_title;
+
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (dict[key]) {
+          el.innerHTML = dict[key];
+        }
+      });
+
+      document.getElementById('name').placeholder = dict.ph_name;
+      document.getElementById('situation').placeholder = dict.ph_situation;
+      const method = document.getElementById('contact-method').value;
+      document.getElementById('contact-value').placeholder = method === 'telefon' ? dict.ph_phone : dict.ph_email;
+
+      selectFormTab(currentFormTab);
+      renderScenario(currentScenario);
+
+      document.querySelectorAll('.lang-label').forEach(lbl => {
+        lbl.textContent = lang === 'de' ? 'EN' : 'DE';
+      });
+    }
+
+    document.querySelectorAll('.lang-toggle').forEach(btn => {
+      btn.addEventListener('click', () => {
+        setLanguage(currentLang === 'de' ? 'en' : 'de');
+      });
+    });
+
+    // Mobile Menu
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const mobileLinks = document.querySelectorAll('.mobile-link');
+
+    mobileMenuBtn.addEventListener('click', () => {
+      const isExpanded = mobileMenuBtn.getAttribute('aria-expanded') === 'true';
+      mobileMenuBtn.setAttribute('aria-expanded', !isExpanded);
+      mobileMenu.classList.toggle('hidden');
+    });
+
+    mobileLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        mobileMenu.classList.add('hidden');
+        mobileMenuBtn.setAttribute('aria-expanded', 'false');
+      });
+    });
+
+    // Simulator
+    const homeFeedEl = document.getElementById('demo-home-feed');
+    const badgeEl = document.getElementById('demo-status-badge');
+    const notifEl = document.getElementById('demo-family-notification');
+    const logEl = document.getElementById('demo-activity-log');
+    const btnOk = document.getElementById('btn-scenario-ok');
+    const btnEscalate = document.getElementById('btn-scenario-escalate');
+
+    function renderScenario(key) {
+      currentScenario = key;
+      const data = scenariosData[currentLang][key];
+      homeFeedEl.innerHTML = data.homeFeed;
+      badgeEl.textContent = data.badgeText;
+      badgeEl.className = data.badgeClass;
+      notifEl.className = data.notificationBg;
+      notifEl.innerHTML = data.notification;
+      logEl.innerHTML = data.log;
+
+      if (key === 'ok') {
+        btnOk.className = 'scenario-btn px-4 py-2.5 rounded-xl font-semibold text-sm sm:text-base bg-brand-teal text-white transition-colors cursor-pointer';
+        btnEscalate.className = 'scenario-btn px-4 py-2.5 rounded-xl font-semibold text-sm sm:text-base bg-brand-offwhite text-brand-ink border border-stone-300 hover:bg-brand-sage transition-colors cursor-pointer';
+      } else {
+        btnEscalate.className = 'scenario-btn px-4 py-2.5 rounded-xl font-semibold text-sm sm:text-base bg-brand-teal text-white transition-colors cursor-pointer';
+        btnOk.className = 'scenario-btn px-4 py-2.5 rounded-xl font-semibold text-sm sm:text-base bg-brand-offwhite text-brand-ink border border-stone-300 hover:bg-brand-sage transition-colors cursor-pointer';
+      }
+      lucide.createIcons();
+    }
+
+    btnOk.addEventListener('click', () => renderScenario('ok'));
+    btnEscalate.addEventListener('click', () => renderScenario('escalate'));
+    renderScenario('ok');
+
+    // Form Tabs
+    const tabPilot = document.getElementById('tab-pilot');
+    const tabInterview = document.getElementById('tab-interview');
+    const requestTypeInput = document.getElementById('request-type');
+    const submitBtn = document.getElementById('submit-btn');
+
+    function selectFormTab(mode) {
+      currentFormTab = mode;
+      const dict = translations[currentLang];
+      if (mode === 'pilot') {
+        tabPilot.className = 'form-tab p-4 rounded-2xl border-2 border-brand-teal bg-white text-left transition-all cursor-pointer';
+        tabPilot.setAttribute('aria-selected', 'true');
+        tabInterview.className = 'form-tab p-4 rounded-2xl border-2 border-stone-200 bg-white/60 hover:bg-white text-left transition-all cursor-pointer';
+        tabInterview.setAttribute('aria-selected', 'false');
+        requestTypeInput.value = dict.tab_pilot_t;
+        submitBtn.textContent = dict.btn_submit_pilot;
+      } else {
+        tabInterview.className = 'form-tab p-4 rounded-2xl border-2 border-brand-teal bg-white text-left transition-all cursor-pointer';
+        tabInterview.setAttribute('aria-selected', 'true');
+        tabPilot.className = 'form-tab p-4 rounded-2xl border-2 border-stone-200 bg-white/60 hover:bg-white text-left transition-all cursor-pointer';
+        tabPilot.setAttribute('aria-selected', 'false');
+        requestTypeInput.value = dict.tab_int_t;
+        submitBtn.textContent = dict.btn_submit_int;
+      }
+    }
+
+    tabPilot.addEventListener('click', () => selectFormTab('pilot'));
+    tabInterview.addEventListener('click', () => selectFormTab('interview'));
+
+    document.querySelectorAll('.cta-trigger').forEach(trigger => {
+      trigger.addEventListener('click', () => {
+        const targetTab = trigger.getAttribute('data-select-tab');
+        if (targetTab) selectFormTab(targetTab);
+      });
+    });
+
+    const contactMethod = document.getElementById('contact-method');
+    const contactValue = document.getElementById('contact-value');
+    contactMethod.addEventListener('change', (e) => {
+      const dict = translations[currentLang];
+      contactValue.placeholder = e.target.value === 'telefon' ? dict.ph_phone : dict.ph_email;
+    });
+
+    // Form Submit
+    const form = document.getElementById('pilot-form');
+    const formError = document.getElementById('form-error');
+    const formSuccess = document.getElementById('form-success');
+    const resetFormBtn = document.getElementById('reset-form-btn');
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const role = document.getElementById('role').value.trim();
+      const name = document.getElementById('name').value.trim();
+      const contact = contactValue.value.trim();
+      const consent = document.getElementById('consent').checked;
+
+      if (!role || !name || !contact || !consent) {
+        formError.classList.remove('hidden');
+        return;
+      }
+
+      formError.classList.add('hidden');
+      form.classList.add('hidden');
+      formSuccess.classList.remove('hidden');
+    });
+
+    resetFormBtn.addEventListener('click', () => {
+      form.reset();
+      formSuccess.classList.add('hidden');
+      form.classList.remove('hidden');
+    });
+
+    // Legal Modal
+    const modal = document.getElementById('legal-modal');
+    const modalTitle = document.getElementById('modal-title');
+    const modalBody = document.getElementById('modal-body');
+    const closeModal = document.getElementById('close-modal');
+
+    document.querySelectorAll('.legal-trigger').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const type = btn.getAttribute('data-modal');
+        const content = legalContentData[currentLang][type];
+        modalTitle.textContent = content.title;
+        modalBody.innerHTML = content.body;
+        modal.classList.remove('hidden');
+      });
+    });
+
+    closeModal.addEventListener('click', () => modal.classList.add('hidden'));
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) modal.classList.add('hidden');
+    });
+  </script>
+</body>
+</html>
